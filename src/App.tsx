@@ -18,7 +18,16 @@ function App() {
     <>
       <Global />
       <button onClick={clickToggleShow}>select Date</button>
-      <DatePickerComponent title="เลือกวันที่" iShow={isShow} clickClose={() => setIshow(false)} clickSelected={(dates) => { console.log(dates); clickToggleShow(); }} reserveDate={60} />
+      <DatePickerComponent 
+     yearType="EN"
+      canselectDate={
+        {from:{day:20,month:2,year:2020},
+        to:{day:1,month:1,year:2030}}} 
+        defaultDate={{timeStamps:[new Date().getTime()]}}
+        title="เลือกวันที่" 
+        iShow={isShow} 
+        clickClose={() => setIshow(false)} 
+        clickSelected={(dates,strDate) => { console.log(dates,strDate); clickToggleShow(); }}  />
     </>
   )
 }
