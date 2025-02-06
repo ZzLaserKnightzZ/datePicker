@@ -22,6 +22,25 @@ export const Container = styled.div<{ $isShow: boolean }>`
       : css`
           transform: translate(-100%, -100%);
         `}
+
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  & > *,
+  *,
+  *,
+  *,
+  *,
+  *,
+  *,
+  *,
+  *,
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 `;
 
 export const ContainerWrapper = styled.div`
@@ -127,7 +146,7 @@ export const SelectYearWrapper = styled.div`
 `;
 
 export const SelectYear = styled.div<{ $isSelected: boolean }>`
-  height: clamp(2.5rem,5vh,5rem);
+  height: clamp(2.5rem, 5vh, 5rem);
   display: grid;
   border-radius: 5px;
   place-items: center;

@@ -17,7 +17,7 @@ function App() {
   const clickToggleShow = () => setIshow(prev => !prev);
   return (
     <>
-      <Global />
+      {/**<Global /> */}
       <button onClick={clickToggleShow}>select Date</button>
       <DatePickerComponent
         yearType="TH"
