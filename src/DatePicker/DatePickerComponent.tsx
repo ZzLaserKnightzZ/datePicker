@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 type Props = {
     iShow: boolean;
-    clickSelected: (dates: TRenderDate[], strDatesDDMMYYYY: string[]) => void;
+    clickSelected: (dates: TRenderDate[], strDatesDefaultDDMMYYYY: string[]) => void;
     clickClose: () => void;
     title: string;
     canselectDate: TCanSelectProp;
