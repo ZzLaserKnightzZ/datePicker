@@ -117,16 +117,17 @@ export const SelectYearContainer = styled.div`
   border-radius: 5px;
   grid-row-start: 4;
   grid-row-end: -1;
+  padding: 5px;
 `;
 
 export const SelectYearWrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(5, minmax(4rem, 1fr));
+  grid-template-columns: repeat(5, minmax(3.5rem, 1fr));
   gap: 5px;
 `;
 
 export const SelectYear = styled.div<{ $isSelected: boolean }>`
-  height: clamp(2.5rem,6vh,5rem);
+  height: clamp(2.5rem,5vh,5rem);
   display: grid;
   border-radius: 5px;
   place-items: center;

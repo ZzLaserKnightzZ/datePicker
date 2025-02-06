@@ -55,7 +55,7 @@ const toDay = new Date();
 export default function DatePickerComponent({ title, canselectDate, defaultSelectedDate, cantSelectDate, iShow, yearType, clickSelected, clickClose }: Props) {
     const [isOpenSelectYear, setIsOpenSelectYear] = useState(false);
     const [today, _] = useState(toDay); //วันที่วันนี้
-    
+
     const [monthAndYear, setMonthAndYear] =
         useState<TSelectMonthAndYear>({ year: today.getFullYear(), months: yearType == "TH" ? 
             monthTH.map((x, i) => ({ monthNumber: i, nameTh: x, isSelected: today.getUTCMonth() === i })) 
@@ -354,8 +354,6 @@ export default function DatePickerComponent({ title, canselectDate, defaultSelec
                             </Picker.DateContainer>
                         </>
                 }
-
-
             </Picker.ContainerWrapper>
         </Picker.Container>
     );
