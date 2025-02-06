@@ -10,6 +10,7 @@ const Global = createGlobalStyle`
   box-sizing: border-box;
 }
 `;
+
 function App() {
   const [isShow, setIshow] = useState(false);
 
@@ -29,7 +30,7 @@ function App() {
         cantSelectDate={{ timeStamps: [new Date(2025, 1, 10, 0, 0, 0).getTime(), new Date(2025, 1, 11, 0, 0, 0).getTime()] }}
         title="เลือกวันที่"
         iShow={isShow}
-        dateConverterCB={(day, month, year) => `${day}-${month}-${year}`}
+        //dateConverterCB={(day, month, year) => `${day}-${month}-${year}`}
         clickClose={() => setIshow(false)}
         clickSelected={(dates, strDate) => { console.log(dates, strDate); clickToggleShow(); }} />
     </>
