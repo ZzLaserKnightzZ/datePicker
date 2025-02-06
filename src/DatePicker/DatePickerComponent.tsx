@@ -10,7 +10,8 @@ type Props = {
     canselectDate: TCanSelectProp;
     defaultSelectedDate?: TDefaultDate;
     cantSelectDate?: TCantSelectDate;
-    yearType: "EN" | "TH"
+    yearType: "EN" | "TH",
+    dateConverterCB?: (day: number, month: number, year: number) => string;
 }
 
 export type TRenderDate = {
@@ -52,15 +53,17 @@ export const AddDays = (date: Date, days: number) => {
 
 const toDay = new Date();
 
-export default function DatePickerComponent({ title, canselectDate, defaultSelectedDate, cantSelectDate, iShow, yearType, clickSelected, clickClose }: Props) {
+export default function DatePickerComponent({ title, canselectDate, defaultSelectedDate, cantSelectDate, iShow, yearType, dateConverterCB, clickSelected, clickClose }: Props) {
     const [isOpenSelectYear, setIsOpenSelectYear] = useState(false);
     const [today, _] = useState(toDay); //วันที่วันนี้
 
     const [monthAndYear, setMonthAndYear] =
-        useState<TSelectMonthAndYear>({ year: today.getFullYear(), months: yearType == "TH" ? 
-            monthTH.map((x, i) => ({ monthNumber: i, nameTh: x, isSelected: today.getUTCMonth() === i })) 
-            : 
-            monthEN.map((x, i) => ({ monthNumber: i, nameTh: x, isSelected: today.getUTCMonth() === i })) });
+        useState<TSelectMonthAndYear>({
+            year: today.getFullYear(), months: yearType == "TH" ?
+                monthTH.map((x, i) => ({ monthNumber: i, nameTh: x, isSelected: today.getUTCMonth() === i }))
+                :
+                monthEN.map((x, i) => ({ monthNumber: i, nameTh: x, isSelected: today.getUTCMonth() === i }))
+        });
 
     const [renderDay, setRenderDay] = useState<TRenderDate[]>([]); //แสดงรายการให้เลือก
     const [selectedDate, setSelectedDate] = useState<TRenderDate[]>([]); //วันที่เลือกแล้ว
@@ -246,13 +249,12 @@ export default function DatePickerComponent({ title, canselectDate, defaultSelec
         });
     }
 
-
     useEffect(initDate, [iShow]);
     useEffect(changeMonth, [monthAndYear]);
 
 
     function clickOk(): void {
-        const strDate = selectedDate.map(x => `${x.date.getDate()}/${x.date.getMonth() + 1}/${yearType == "TH" ? x.date.getFullYear() + 543 : x.date.getFullYear()}`);
+        const strDate = selectedDate.map(x => dateConverterCB ? dateConverterCB(x.date.getDate(), x.date.getMonth() + 1, yearType == "TH" ? x.date.getFullYear() + 543 : x.date.getFullYear()) : `${x.date.getDate()}/${x.date.getMonth() + 1}/${yearType == "TH" ? x.date.getFullYear() + 543 : x.date.getFullYear()}`);
         clickSelected && clickSelected(selectedDate, strDate);
     }
 

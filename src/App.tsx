@@ -25,10 +25,11 @@ function App() {
             from: { day: 20, month: 2, year: 2560 },
             to: { day: 1, month: 1, year: 2570 }
           }}
-        defaultSelectedDate={{ timeStamps: [new Date().getTime(),new Date(2025,1,1,0,0,0).getTime()] }}
-        cantSelectDate={{timeStamps:[new Date(2025,1,10,0,0,0).getTime(),new Date(2025,1,11,0,0,0).getTime()]}}
+        defaultSelectedDate={{ timeStamps: [new Date().getTime(), new Date(2025, 1, 1, 0, 0, 0).getTime()] }}
+        cantSelectDate={{ timeStamps: [new Date(2025, 1, 10, 0, 0, 0).getTime(), new Date(2025, 1, 11, 0, 0, 0).getTime()] }}
         title="เลือกวันที่"
         iShow={isShow}
+        dateConverterCB={(day, month, year) => `${day}-${month}-${year}`}
         clickClose={() => setIshow(false)}
         clickSelected={(dates, strDate) => { console.log(dates, strDate); clickToggleShow(); }} />
     </>
