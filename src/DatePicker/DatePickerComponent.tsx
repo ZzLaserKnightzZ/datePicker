@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 
 type Props = {
     iShow: boolean;
-    clickSelected: (dates: TRenderDate[],strDatesDDMMYYYY:string[]) => void;
+    clickSelected: (dates: TRenderDate[], strDatesDDMMYYYY: string[]) => void;
     clickClose: () => void;
     title: string;
     canselectDate: TCanSelectProp;
-    defaultDate?: TDefaultDate;
+    defaultSelectedDate?: TDefaultDate;
+    cantSelectDate?: TCantSelectDate;
     yearType: "EN" | "TH"
 }
 
@@ -22,6 +23,8 @@ export type TRenderDate = {
 export type TDefaultDate = {
     timeStamps: number[];
 }
+
+export type TCantSelectDate = {} & TDefaultDate;
 
 export type TCanSelectProp = {
     from: { day: number; month: number; year: number; }
@@ -38,7 +41,10 @@ export type TSelectMonthAndYear = {
 }
 
 export const monthTH = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
-export const dayTH = ["วันอาทิตย์", "วันจันทร์", "วันอังคาร", "วันพุธ", "วันพฤหัสบดี", "วันศุกร์", "วันเสาร์"];
+export const monthEN = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+export const dateTH = ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"];
+export const dateEN = ["SUN", "MON", "TUE", "WEN", "THU", "FRI", "SAT"]; //date Not day
+
 export const AddDays = (date: Date, days: number) => {
     const newDate = new Date(date.getTime() + days * 24 * 60 * 60 * 1000);
     return newDate;
@@ -46,8 +52,7 @@ export const AddDays = (date: Date, days: number) => {
 
 const toDay = new Date();
 
-
-export default function DatePickerComponent({ title, canselectDate, defaultDate, iShow, yearType, clickSelected, clickClose }: Props) {
+export default function DatePickerComponent({ title, canselectDate, defaultSelectedDate, cantSelectDate, iShow, yearType, clickSelected, clickClose }: Props) {
     const [isOpenSelectYear, setIsOpenSelectYear] = useState(false);
     const [today, _] = useState(toDay); //วันที่วันนี้
     const [monthAndYear, setMonthAndYear] =
@@ -72,7 +77,12 @@ export default function DatePickerComponent({ title, canselectDate, defaultDate,
                 current = current >= 0 ? current : 11;
                 state.months = state?.months.map((x) => ({ ...x, isSelected: x.monthNumber == current ? true : false }));
                 state.year = current == 11 ? state.year - 1 : state.year;
-                state.year = state.year <= canselectDate.from.year ? canselectDate.from.year : state.year;
+                if (yearType == "TH") {
+                    state.year = state.year <= canselectDate.from.year - 543 ? canselectDate.from.year - 543 : state.year;
+                } else {
+                    state.year = state.year <= canselectDate.from.year ? canselectDate.from.year : state.year;
+                }
+
             }
             return state;
         });
@@ -86,7 +96,12 @@ export default function DatePickerComponent({ title, canselectDate, defaultDate,
                 current = current <= 11 ? current : 0;
                 state.months = state.months.map((x) => ({ ...x, isSelected: x.monthNumber == current ? true : false }));
                 state.year = current == 0 ? state.year + 1 : state.year; //ถ้าเลื่อนขึ้นแล้ว มีค่าเป็น1 แสดงว่าขึ้นปีไหม่
-                state.year = state.year >= canselectDate.to.year ? canselectDate.to.year : state.year;
+                if (yearType == "TH") {
+                    state.year = state.year >= canselectDate.to.year - 543 ? canselectDate.to.year - 543 : state.year;
+                } else {
+                    state.year = state.year >= canselectDate.to.year ? canselectDate.to.year : state.year;
+                }
+
             }
             return state;
         });
@@ -113,13 +128,19 @@ export default function DatePickerComponent({ title, canselectDate, defaultDate,
         const startDate = new Date(today.getUTCFullYear(), today.getMonth(), 1, today.getHours(), today.getMinutes(), today.getSeconds()); //วันที่1ของทุกเดือน
         const startDateInWeek = -startDate.getDay(); //start day of week ว่าวันที่เริ่มเป็นวันที่วันไหนในสัปดาห์ อ-ส = 0-6
 
-        const fromDate = new Date(yearType == "TH" ? canselectDate.from.year-543:canselectDate.from.year, canselectDate.from.month, canselectDate.from.day, 0, 0, 0);
-        const toDate = new Date(yearType == "TH" ? canselectDate.to.year-543:canselectDate.to.year, canselectDate.to.month, canselectDate.to.day, 0, 0, 0);
+        const fromDate = new Date(yearType == "TH" ? canselectDate.from.year - 543 : canselectDate.from.year, canselectDate.from.month, canselectDate.from.day, 0, 0, 0);
+        const toDate = new Date(yearType == "TH" ? canselectDate.to.year - 543 : canselectDate.to.year, canselectDate.to.month, canselectDate.to.day, 0, 0, 0);
 
         const defaulDates: Date[] = [];
-        if (defaultDate) {
-            for (const timeStamp of defaultDate?.timeStamps) {
+        if (defaultSelectedDate) {
+            for (const timeStamp of defaultSelectedDate?.timeStamps) {
                 defaulDates.push(new Date(timeStamp));
+            }
+        }
+        const cantSelectDates: Date[] = [];
+        if (cantSelectDate) {
+            for (const cantSelect of cantSelectDate?.timeStamps) {
+                cantSelectDates.push(new Date(cantSelect));
             }
         }
 
@@ -127,9 +148,16 @@ export default function DatePickerComponent({ title, canselectDate, defaultDate,
             const date = AddDays(startDate, day);
             let canselect = false;
             let selected = false;
+
             if ((date.getTime() >= fromDate.getTime()) && (date.getTime() <= toDate.getTime())) {
                 canselect = true;
             }
+
+            for (const cantSelect of cantSelectDates)
+                if ((date.getDate() == cantSelect.getDate()) && (date.getMonth() == cantSelect.getMonth() && date.getFullYear() == cantSelect.getFullYear())) {
+                    canselect = false;
+                    break;
+                }
             //วันที่เลือกแล้ว
             for (const selectedDate of defaulDates) {
                 if (selectedDate.getDate() == date.getDate() &&
@@ -163,14 +191,28 @@ export default function DatePickerComponent({ title, canselectDate, defaultDate,
         const startDate = new Date(monthAndYear.year, selectedMonth.monthNumber, 1, today.getHours(), today.getMinutes(), today.getSeconds()); //วันที่1ของทุกเดือน
         const startDateInWeek = - startDate.getDay(); //start day of week ว่าวันที่เริ่มเป็นวันที่วันไหนในสัปดาห์ อ-ส = 0-6
 
-        const fromDate = new Date(yearType == "TH" ? canselectDate.from.year-543:canselectDate.from.year, canselectDate.from.month, canselectDate.from.day, 0, 0, 0);
-        const toDate = new Date(yearType == "TH" ? canselectDate.to.year-543:canselectDate.to.year, canselectDate.to.month, canselectDate.to.day, 0, 0, 0);
+        const fromDate = new Date(yearType == "TH" ? canselectDate.from.year - 543 : canselectDate.from.year, canselectDate.from.month, canselectDate.from.day, 0, 0, 0);
+        const toDate = new Date(yearType == "TH" ? canselectDate.to.year - 543 : canselectDate.to.year, canselectDate.to.month, canselectDate.to.day, 0, 0, 0);
+
+        const cantSelectDates: Date[] = [];
+        if (cantSelectDate) {
+            for (const cantSelect of cantSelectDate?.timeStamps) {
+                cantSelectDates.push(new Date(cantSelect));
+            }
+        }
+
         for (let day = startDateInWeek; day <= 31; day++) { //วนเพิ่มวัน
             const date = AddDays(startDate, day);
             let canselect = false;
             if ((date.getTime() >= fromDate.getTime()) && (date.getTime() <= toDate.getTime())) {
                 canselect = true;
             }
+
+            for (const cantSelect of cantSelectDates)
+                if ((date.getDate() == cantSelect.getDate()) && (date.getMonth() == cantSelect.getMonth() && date.getFullYear() == cantSelect.getFullYear())) {
+                    canselect = false;
+                    break;
+                }
 
             const d: TRenderDate = {
                 isSelected: false,
@@ -205,8 +247,8 @@ export default function DatePickerComponent({ title, canselectDate, defaultDate,
 
 
     function clickOk(): void {
-        const strDate = selectedDate.map(x => `${x.date.getDate()}/${x.date.getMonth()+1}/${yearType == "TH" ? x.date.getFullYear()+543:x.date.getFullYear()}`);
-        clickSelected && clickSelected(selectedDate,strDate);
+        const strDate = selectedDate.map(x => `${x.date.getDate()}/${x.date.getMonth() + 1}/${yearType == "TH" ? x.date.getFullYear() + 543 : x.date.getFullYear()}`);
+        clickSelected && clickSelected(selectedDate, strDate);
     }
 
     return (
@@ -227,12 +269,12 @@ export default function DatePickerComponent({ title, canselectDate, defaultDate,
 
 
                 <Picker.CurrentDate>
-                    {dayTH[today.getDay()]} ที่ {today.getUTCDate()}/{today.getUTCMonth() + 1}/{yearType == "TH" ? today.getUTCFullYear() + 543 : today.getUTCFullYear()}
+                    {yearType == "TH" ? dateTH[today.getDay()] : dateEN[today.getDay()]} ที่ {today.getUTCDate()}/{today.getUTCMonth() + 1}/{yearType == "TH" ? today.getUTCFullYear() + 543 : today.getUTCFullYear()}
                 </Picker.CurrentDate>
 
                 {/**selected year */}
                 <Picker.CurrentYear>
-                    &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;  {yearType == "TH" ? monthAndYear.year+543:monthAndYear.year} &nbsp; &nbsp;
+                    &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;  {yearType == "TH" ? monthAndYear.year + 543 : monthAndYear.year} &nbsp; &nbsp;
                     <Picker.SelectYearBtn $isOpen={isOpenSelectYear} onClick={() => setIsOpenSelectYear(prev => !prev)}><FaAngleDown /></Picker.SelectYearBtn>
                 </Picker.CurrentYear>
                 {
@@ -240,11 +282,11 @@ export default function DatePickerComponent({ title, canselectDate, defaultDate,
                         <Picker.SelectYearContainer>
                             <Picker.SelectYearWrapper>
                                 {
-                                    Array.apply(null, Array(Math.floor(( (yearType == "TH" ? canselectDate.to.year +543:canselectDate.to.year) - (yearType == "TH" ? canselectDate.from.year+543:canselectDate.from.year))  ) + 1))
+                                    Array.apply(null, Array(Math.floor(((yearType == "TH" ? canselectDate.to.year + 543 : canselectDate.to.year) - (yearType == "TH" ? canselectDate.from.year + 543 : canselectDate.from.year))) + 1))
                                         .map((_, i) => canselectDate.from.year + i)
                                         .map(year =>
-                                            <Picker.SelectYear key={year} $isSelected={year == (yearType == "TH" ? monthAndYear.year+543:monthAndYear.year)} onClick={clickSelectYear(yearType == "TH" ? year - 543 : year)}>
-                                                { year}
+                                            <Picker.SelectYear key={year} $isSelected={year == (yearType == "TH" ? monthAndYear.year + 543 : monthAndYear.year)} onClick={clickSelectYear(yearType == "TH" ? year - 543 : year)}>
+                                                {year}
                                             </Picker.SelectYear>)
                                 }
                             </Picker.SelectYearWrapper>
@@ -256,7 +298,7 @@ export default function DatePickerComponent({ title, canselectDate, defaultDate,
                                     <FaLessThan />
                                 </Picker.ChangeMonthBtn>
                                 <Picker.MonthName>
-                                    {monthAndYear.months.find(x => x.isSelected)?.nameTh} {yearType == "TH" ?  monthAndYear.year+543:monthAndYear.year}
+                                    {monthAndYear.months.find(x => x.isSelected)?.nameTh} {yearType == "TH" ? monthAndYear.year + 543 : monthAndYear.year}
                                 </Picker.MonthName>
                                 <Picker.ChangeMonthBtn onClick={clickNextMonth}>
                                     <FaGreaterThan />
@@ -266,13 +308,12 @@ export default function DatePickerComponent({ title, canselectDate, defaultDate,
                             <Picker.DateContainer>
 
                                 <Picker.DateDayNameContainer>
-                                    <Picker.DayName>อาทิตย์</Picker.DayName>
-                                    <Picker.DayName>จันทร์</Picker.DayName>
-                                    <Picker.DayName>อังคาร</Picker.DayName>
-                                    <Picker.DayName>พุทธ</Picker.DayName>
-                                    <Picker.DayName>พฤหัส</Picker.DayName>
-                                    <Picker.DayName>ศุกร์</Picker.DayName>
-                                    <Picker.DayName>เสาร์</Picker.DayName>
+                                    {
+                                        yearType == "TH" ?
+                                            dateTH.map((x, i) => <Picker.DayName key={i}>{x}</Picker.DayName>)
+                                            :
+                                            dateEN.map((x, i) => <Picker.DayName key={i}>{x}</Picker.DayName>)
+                                    }
                                 </Picker.DateDayNameContainer>
 
                                 <Picker.DateDayNameContainer>
@@ -296,7 +337,7 @@ export default function DatePickerComponent({ title, canselectDate, defaultDate,
                                             <Picker.SelectedDayItem key={i}>
                                                 <Picker.SelectedDayNumber>{i + 1}</Picker.SelectedDayNumber>
                                                 <Picker.SelectedDayText>
-                                                    {dayTH[x.date.getDay()]}  {x.date.getDate()}/{x.date.getMonth() + 1} {yearType == "TH" ?  x.date.getUTCFullYear()+543:x.date.getUTCFullYear()}
+                                                    {yearType == "TH" ? dateTH[x.date.getDay()] : dateEN[x.date.getDay()]}  {x.date.getDate()}/{x.date.getMonth() + 1} {yearType == "TH" ? x.date.getUTCFullYear() + 543 : x.date.getUTCFullYear()}
                                                 </Picker.SelectedDayText>
                                                 <Picker.SelectedDayBtnDelete onClick={clickCancle(x)}>
                                                     <FaRegTimesCircle />
