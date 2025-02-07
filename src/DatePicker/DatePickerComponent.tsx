@@ -18,7 +18,6 @@ export type TRenderDate = {
     isSelected: boolean;
     canSelect: boolean;
     date: Date;
-    isShowing?: boolean;
 }
 
 export type TDefaultDate = {
@@ -44,7 +43,7 @@ export type TSelectMonthAndYear = {
 export const monthTH = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
 export const monthEN = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 export const dateTH = ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"];
-export const dateEN = ["SUN", "MON", "TUE", "WEN", "THU", "FRI", "SAT"]; //date Not day
+export const dateEN = ["SUN", "MON", "TUE", "WEN", "THU", "FRI", "SAT"]; 
 
 export const AddDays = (date: Date, days: number) => {
     const newDate = new Date(date.getTime() + days * 24 * 60 * 60 * 1000);
@@ -55,11 +54,11 @@ const toDay = new Date();
 
 export default function DatePickerComponent({ title, canselectDate, defaultSelectedDate, cantSelectDate, iShow, yearType, dateConverterCB, clickSelected, clickClose }: Props) {
     const [isOpenSelectYear, setIsOpenSelectYear] = useState(false);
-    const [today, _] = useState(toDay); //วันที่วันนี้
-
+    const [today, _] = useState(toDay); 
     const [monthAndYear, setMonthAndYear] =
         useState<TSelectMonthAndYear>({
-            year: today.getFullYear(), months: yearType == "TH" ?
+            year: today.getFullYear(), 
+            months: yearType == "TH" ?
                 monthTH.map((x, i) => ({ monthNumber: i, nameTh: x, isSelected: today.getUTCMonth() === i }))
                 :
                 monthEN.map((x, i) => ({ monthNumber: i, nameTh: x, isSelected: today.getUTCMonth() === i }))
@@ -109,7 +108,6 @@ export default function DatePickerComponent({ title, canselectDate, defaultSelec
                 } else {
                     state.year = state.year >= canselectDate.to.year ? canselectDate.to.year : state.year;
                 }
-
             }
             return state;
         });
@@ -180,7 +178,6 @@ export default function DatePickerComponent({ title, canselectDate, defaultSelec
                 isSelected: selected,
                 canSelect: canselect,
                 date: date,
-                isShowing: true
             };
             dates = [...dates, d];
 
@@ -225,8 +222,7 @@ export default function DatePickerComponent({ title, canselectDate, defaultSelec
             const d: TRenderDate = {
                 isSelected: false,
                 canSelect: canselect,
-                date: date,
-                isShowing: true
+                date: date
             };
             dates = [...dates, d];
 
@@ -252,7 +248,6 @@ export default function DatePickerComponent({ title, canselectDate, defaultSelec
     useEffect(initDate, [iShow]);
     useEffect(changeMonth, [monthAndYear]);
 
-
     function clickOk(): void {
         const strDate = selectedDate.map(x => dateConverterCB ? dateConverterCB(x.date.getDate(), x.date.getMonth() + 1, yearType == "TH" ? x.date.getFullYear() + 543 : x.date.getFullYear()) : `${x.date.getDate()}/${x.date.getMonth() + 1}/${yearType == "TH" ? x.date.getFullYear() + 543 : x.date.getFullYear()}`);
         clickSelected && clickSelected(selectedDate, strDate);
@@ -274,12 +269,10 @@ export default function DatePickerComponent({ title, canselectDate, defaultSelec
                     </Picker.OkBtn>
                 </Picker.Header>
 
-
                 <Picker.CurrentDate>
-                    {yearType == "TH" ? dateTH[today.getDay()] : dateEN[today.getDay()]} ที่ {today.getUTCDate()}/{today.getUTCMonth() + 1}/{yearType == "TH" ? today.getUTCFullYear() + 543 : today.getUTCFullYear()}
+                    {yearType == "TH" ? dateTH[today.getDay()] : dateEN[today.getDay()]} {today.getUTCDate()}/{today.getUTCMonth() + 1}/{yearType == "TH" ? today.getUTCFullYear() + 543 : today.getUTCFullYear()}
                 </Picker.CurrentDate>
 
-                {/**selected year */}
                 <Picker.CurrentYear>
                     &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;  {yearType == "TH" ? monthAndYear.year + 543 : monthAndYear.year} &nbsp; &nbsp;
                     <Picker.SelectYearBtn $isOpen={isOpenSelectYear} onClick={() => setIsOpenSelectYear(prev => !prev)}><FaAngleDown /></Picker.SelectYearBtn>

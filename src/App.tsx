@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import DatePickerComponent from './DatePicker/DatePickerComponent';
+import DatePickerComponent, { monthTH } from './DatePicker/DatePickerComponent';
 
 import { createGlobalStyle } from "styled-components"
 
@@ -20,19 +20,22 @@ function App() {
       {/**<Global /> */}
       <button onClick={clickToggleShow}>select Date</button>
       <DatePickerComponent
-        yearType="TH"
+        //ประเภทวันที่
+        yearType="EN"
+        //วันที่สามารถเลือกได้และแสดง
         canselectDate={
           {
-            from: { day: 20, month: 2, year: 2560 },
-            to: { day: 1, month: 1, year: 2570 }
+            from: { day: 20, month: 2, year: 2020 },
+            to: { day: 1, month: 1, year: 2030 }
           }}
-        defaultSelectedDate={{ timeStamps: [new Date().getTime(), new Date(2025, 1, 1, 0, 0, 0).getTime()] }}
-        cantSelectDate={{ timeStamps: [new Date(2025, 1, 10, 0, 0, 0).getTime(), new Date(2025, 1, 11, 0, 0, 0).getTime()] }}
-        title="เลือกวันที่"
-        iShow={isShow}
-        //dateConverterCB={(day, month, year) => `${day}-${month}-${year}`}
-        clickClose={() => setIshow(false)}
-        clickSelected={(dates, strDate) => { console.log(dates, strDate); clickToggleShow(); }} />
+        defaultSelectedDate={{ timeStamps: [new Date("February 17, 2025 03:24:00").getTime(), new Date(2025, 1, 1, 0, 0, 0).getTime()] }} //วันที่เลือกไว้แล้ว
+        cantSelectDate={{ timeStamps: [new Date(2025, 1, 10, 0, 0, 0).getTime(), new Date(2025, 1, 11, 0, 0, 0).getTime()] }} //วันที่ล๊อกไม่ให้เลือก
+        title="เลือกวันที่" //แสดงส่วนหัว
+        iShow={isShow} //แสดงปอปอัพ
+        dateConverterCB={(day, month, year) => `${day}-${monthTH[month - 1]}-${year}`} //แปลงรูปแบบตอนกดokออกมา
+        clickClose={() => setIshow(false)} //ปิดปอปอัพ
+        clickSelected={(dates, strDate) => { console.log(dates, strDate); clickToggleShow(); }} //กดokแล้วปิดปอปอัพไป
+      />
     </>
   )
 }

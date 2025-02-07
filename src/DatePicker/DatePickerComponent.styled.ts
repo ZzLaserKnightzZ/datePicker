@@ -299,6 +299,7 @@ export const SelectedDayBtnDelete = styled.button`
   display: grid;
   place-items: center;
   color: white;
+  background: transparent;
   border: 2px solid rgb(255, 0, 0);
   box-shadow: inset 0 0 5px rgb(255, 0, 0);
 `;
