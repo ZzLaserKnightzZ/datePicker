@@ -246,7 +246,7 @@ export default function DatePickerComponent({ title, canselectDate, defaultSelec
     }
 
     useEffect(initDate, [iShow]);
-    useEffect(changeMonth, [monthAndYear]);
+    useEffect(changeMonth, [monthAndYear]); //[monthAndYear,canselectDate,defaultSelectedDate.timeStamps,cantSelectDate.timeStamps] //อัพเดทuiไหม่หากค่่าเปลี่ยนแปลง
 
     function clickOk(): void {
         const strDate = selectedDate.map(x => dateConverterCB ? dateConverterCB(x.date.getDate(), x.date.getMonth() + 1, yearType == "TH" ? x.date.getFullYear() + 543 : x.date.getFullYear()) : `${x.date.getDate()}/${x.date.getMonth() + 1}/${yearType == "TH" ? x.date.getFullYear() + 543 : x.date.getFullYear()}`);
